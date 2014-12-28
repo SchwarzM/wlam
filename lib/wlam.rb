@@ -1,7 +1,10 @@
+require 'logger'
+require 'open4'
 require 'open-uri'
 require 'uri'
 require 'thor'
-require "wlam/version"
+require 'wlam/command'
+require 'wlam/version'
 require 'wlam/aversion'
 require 'wlam/dsl'
 require 'wlam/client/client'
@@ -10,5 +13,10 @@ require 'wlam/git_addon'
 require 'wlam/svn_addon'
 
 module WLAM
-  # Your code goes here...
+  def self.log
+    @log
+  end
+  def self.log=(logger)
+    @log = logger
+  end
 end

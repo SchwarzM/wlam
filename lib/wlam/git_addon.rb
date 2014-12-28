@@ -7,7 +7,7 @@ module WLAM
     end
 
     def update
-      puts "Checkout git #{@name}"
+      WLAM.log.debug("Checkout git #{@name}")
       if Dir.exist? File.join(@options[:root], @name)
         fetch
       else
@@ -16,7 +16,7 @@ module WLAM
     end
 
     def versions
-      puts "Versions git #{@name}"
+      WLAM.log.debug("Versions git #{@name}")
       text = `git tag -l`
       versions = text.split(/\n/)
       ret = []
@@ -24,9 +24,9 @@ module WLAM
         version = Aversion.normalize_version(ver)
         begin
           v = Gem::Version.new(version)
-          ret << Aversion.new(ver, v)
+          ret << Aversion.new(ver, v) unless @options[:ignore_version] && @options[:ignore_version].include?(v.to_s)
         rescue
-          puts "Discarding #{ver} as unparseable please provide a parse option"
+          WLAM.log.warn("Discarding #{ver} as unparseable please provide a parse option")
         end
       end
       ret
@@ -34,12 +34,12 @@ module WLAM
 
     def clone
       Dir.chdir(@options[:root])
-      `git clone #{@options[:source]} #{@name}`
+      WLAM::Command.execute("git clone #{@options[:source]} #{@name}")
     end
 
     def fetch
       Dir.chdir(File.join(@options[:root], @name))
-      `git fetch --tags`
+      WLAM::Command.execute("git fetch --tags")
     end
 
   end
